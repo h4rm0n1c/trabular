@@ -25,7 +25,7 @@
 	#error "F_CPU is not defined"
 #else
 	#ifdef HALF_SPEED
-		#if F_CPU != 80000000
+		#if F_CPU != 8000000
 			#error "F_CPU set incorrectly (HALF_SPEED)"
 		#endif
 	#else
