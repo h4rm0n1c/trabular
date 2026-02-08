@@ -62,19 +62,19 @@ void handle_data()
 {
 	// --- use USI ---
 	#ifndef USE_USART
+		// process completed byte first, regardless of CS state
+		if (USISR & _BV(USIOIF))
+		{
+			uint8_t serial = USIBR;
+			USISR |= _BV(USIOIF);
+			USIDR = handle_serial_data(serial);
+		}
 		// CS (PB4) active-low: when high, reset counter so next
 		// byte starts from bit 0 — this prevents framing drift
 		if (PINB & _BV(PB4))
 		{
-			USISR = _BV(USIOIF); // clear overflow flag, counter = 0
-			return;
+			USISR = 0; // reset counter only (writing 0 to w1c bits is a no-op)
 		}
-		// is there a new byte? if not, nothing to do here
-		if (!(USISR & _BV(USIOIF))) return;
-		// read the buffer contents, clear the data flag, and process
-		uint8_t serial = USIBR;
-		USISR |= _BV(USIOIF);
-		USIDR = handle_serial_data(serial);
 		
 	// --- use USART ---
 	#else
