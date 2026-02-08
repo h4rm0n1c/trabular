@@ -52,6 +52,7 @@ void init_data()
 	
 	#else /* ! USE_USART */
 		// SPI enable instead
+		DDRB |= _BV(PB1); // DO (MISO) must be output for USI three-wire mode
 		USICR |= _BV(USIWM0) | _BV(USICS1);
 	#endif /* USE_USART */
 }
