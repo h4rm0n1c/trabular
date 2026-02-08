@@ -53,6 +53,7 @@ void init_data()
 	#else /* ! USE_USART */
 		// SPI enable instead
 		DDRB |= _BV(PB1); // DO (MISO) must be output for USI three-wire mode
+		PORTB |= _BV(PB4); // CS pull-up (active-low, defaults inactive)
 		USICR |= _BV(USIWM0) | _BV(USICS1);
 	#endif /* USE_USART */
 }
@@ -61,6 +62,13 @@ void handle_data()
 {
 	// --- use USI ---
 	#ifndef USE_USART
+		// CS (PB4) active-low: when high, reset counter so next
+		// byte starts from bit 0 — this prevents framing drift
+		if (PINB & _BV(PB4))
+		{
+			USISR = _BV(USIOIF); // clear overflow flag, counter = 0
+			return;
+		}
 		// is there a new byte? if not, nothing to do here
 		if (!(USISR & _BV(USIOIF))) return;
 		// read the buffer contents, clear the data flag, and process
