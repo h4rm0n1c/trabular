@@ -28,3 +28,8 @@ minimal in most cases.
 The firmware is licensed under
 [GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html).  See the LICENSE
 file.
+
+
+make clean && make MCU=attiny85 F_CPU=8000000 ADB_PORT=ADB_PORTB ADB_DATA_PIN=3 FEATURES="-DUSE_MOUSE -DUSE_KEYBOARD -DUSE_ARBITRARY -DHALF_SPEED"
+
+sudo avrdude -p t85 -c stk500v1 -P /dev/ttyUSB0 -b 9600 -U flash:w:program.hex:i
